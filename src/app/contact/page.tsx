@@ -9,18 +9,20 @@ export default function ContactPage() {
         {
             icon: Phone,
             title: "Call Us",
-            details: "+61493012435",
+            details: "+61 493 012 435",
             sub: "Mon - Fri, 9am - 5pm",
             href: "tel:+61493012435",
             color: "text-primary",
+            bg: "bg-primary/5",
         },
         {
             icon: Mail,
             title: "Email Us",
-            details: "info@safehomenest.com.au",
+            details: "info@safehomenestcare.com.au",
             sub: "We respond within 24h",
-            href: "mailto:info@safehomenest.com.au",
+            href: "mailto:info@safehomenestcare.com.au",
             color: "text-secondary-600",
+            bg: "bg-secondary-600/5",
         },
         {
             icon: MapPin,
@@ -29,6 +31,7 @@ export default function ContactPage() {
             sub: "Australia",
             href: "#",
             color: "text-accent",
+            bg: "bg-accent/5",
         },
         {
             icon: Clock,
@@ -37,13 +40,14 @@ export default function ContactPage() {
             sub: "Available for participants",
             href: "tel:+61493012435",
             color: "text-primary-400",
+            bg: "bg-primary-400/5",
         },
     ];
 
     return (
         <div className="pt-32 pb-24 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Minimal Header */}
+                {/* Hero Header */}
                 <div className="mb-20">
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -68,14 +72,14 @@ export default function ContactPage() {
                         transition={{ delay: 0.2 }}
                         className="text-xl md:text-2xl text-slate-600 max-w-2xl font-medium leading-relaxed"
                     >
-                        Have questions about our disability support services? Our friendly team is here to guide you with care and expertise.
+                        Our friendly team typically responds within 24 hours.
                     </motion.p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
                     {/* Left: Contact Info */}
                     <div className="lg:col-span-4 space-y-12">
-                        <div className="space-y-8">
+                        <div className="space-y-6">
                             {contactInfo.map((item, idx) => (
                                 <motion.a
                                     key={idx}
@@ -83,10 +87,10 @@ export default function ContactPage() {
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.3 + idx * 0.05 }}
-                                    className="flex items-start gap-5 group"
+                                    className="flex items-start gap-4 group p-4 rounded-xl hover:bg-slate-50 transition-all"
                                 >
-                                    <div className={`mt-1 flex-shrink-0 ${item.color}`}>
-                                        <item.icon size={22} strokeWidth={2.5} />
+                                    <div className={`mt-0.5 flex-shrink-0 w-10 h-10 rounded-lg ${item.bg} ${item.color} flex items-center justify-center`}>
+                                        <item.icon size={20} strokeWidth={2.5} />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-slate-900 text-sm tracking-tight mb-1">{item.title}</h4>
@@ -97,7 +101,7 @@ export default function ContactPage() {
                             ))}
                         </div>
 
-                        {/* Social Links - Minimal */}
+                        {/* Social Links */}
                         <div className="pt-8 border-t border-slate-100">
                             <p className="text-[10px] uppercase tracking-widest font-black text-slate-300 mb-4">Follow Us</p>
                             <div className="flex gap-6">
@@ -112,7 +116,10 @@ export default function ContactPage() {
 
                     {/* Right: Contact Form */}
                     <div className="lg:col-span-8">
-                        <div className="bg-slate-50 p-8 md:p-14 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div
+                            className="bg-white p-8 md:p-10 rounded-2xl relative overflow-hidden"
+                            style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.08)", borderRadius: "16px" }}
+                        >
                             {/* Subtle Background Decoration */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -mr-32 -mt-32" />
                             <div className="relative z-10">

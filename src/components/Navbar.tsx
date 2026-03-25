@@ -90,7 +90,7 @@ const Navbar = () => {
             </div>
 
             {/* ── Main Navbar — Center logo, split nav links ── */}
-            <nav className={`sticky top-0 z-50 transition-all duration-300 bg-white ${scrolled ? "border-b border-slate-100" : ""}`}>
+            <nav className={`sticky top-0 z-50 transition-all duration-300 bg-white ${scrolled ? "border-b border-slate-100 shadow-md" : ""}`}>
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="flex items-center justify-between h-14 md:h-16">
 
@@ -100,12 +100,15 @@ const Navbar = () => {
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className={`px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors whitespace-nowrap ${isActive(link.href)
+                                    className={`relative px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors whitespace-nowrap ${isActive(link.href)
                                         ? "text-primary"
                                         : "text-slate-700 hover:text-primary"
                                         }`}
                                 >
                                     {link.name}
+                                    {isActive(link.href) && (
+                                        <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full" />
+                                    )}
                                 </Link>
                             ))}
                         </div>
@@ -125,12 +128,15 @@ const Navbar = () => {
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className={`px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors whitespace-nowrap ${isActive(link.href)
+                                    className={`relative px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors whitespace-nowrap ${isActive(link.href)
                                         ? "text-primary"
                                         : "text-slate-700 hover:text-primary"
                                         }`}
                                 >
                                     {link.name}
+                                    {isActive(link.href) && (
+                                        <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full" />
+                                    )}
                                 </Link>
                             ))}
                         </div>

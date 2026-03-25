@@ -1,33 +1,54 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import emailjs from "@emailjs/browser";
 
 const ContactForm = () => {
-    const formRef = useRef<HTMLFormElement>(null);
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+    });
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus("loading");
         setErrorMessage("");
 
-        try {
-            await emailjs.sendForm(
-                "service_4ljc5r9",
-                "template_50751rp",
-                formRef.current!,
-                "A0E7xigqv43aKHWqy"
-            );
-            setStatus("success");
-            formRef.current?.reset();
-        } catch (error) {
-            console.error("EmailJS Error:", error);
+        if (!formData.fullName || !formData.email || !formData.phone || !formData.message) {
+            setErrorMessage("All fields are required.");
             setStatus("error");
-            setErrorMessage("Something went wrong. Please try again.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setStatus("success");
+                setFormData({ fullName: "", email: "", phone: "", message: "" });
+            } else {
+                throw new Error(data.error || "Failed to send message");
+            }
+        } catch (error: any) {
+            console.error("Form Submission Error:", error);
+            setStatus("error");
+            setErrorMessage(error.message || "Something went wrong. Please try again.");
         }
     };
 
@@ -42,12 +63,17 @@ const ContactForm = () => {
                         exit={{ opacity: 0, scale: 0.9 }}
                         className="text-center py-12 space-y-6"
                     >
-                        <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+                            className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6"
+                        >
                             <CheckCircle size={40} />
-                        </div>
-                        <h3 className="text-3xl font-bold text-slate-900">Message Sent!</h3>
+                        </motion.div>
+                        <h3 className="text-3xl font-bold text-slate-900">Thank You!</h3>
                         <p className="text-slate-600 max-w-sm mx-auto font-medium">
-                            Thank you for reaching out. A member of our team will contact you shortly.
+                            We&apos;ll get back to you within 24 hours.
                         </p>
                         <button
                             onClick={() => setStatus("idle")}
@@ -59,54 +85,73 @@ const ContactForm = () => {
                 ) : (
                     <motion.form
                         key="form"
-                        ref={formRef}
                         onSubmit={handleSubmit}
-                        className="space-y-8"
+                        className="space-y-6"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                     >
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-400 px-1 uppercase tracking-[0.2em]">Full Name</label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Full Name <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     required
                                     type="text"
-                                    name="from_name"
+                                    name="fullName"
+                                    value={formData.fullName}
+                                    onChange={handleChange}
                                     placeholder="John Doe"
-                                    className="w-full px-0 py-3 bg-transparent border-b-2 border-slate-200 focus:border-primary transition-all outline-none text-slate-900 font-bold placeholder:text-slate-200"
+                                    disabled={status === "loading"}
+                                    className="w-full px-4 py-3.5 bg-white border-[1.5px] border-slate-200 rounded-[10px] focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-slate-900 font-medium placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-400 min-h-[44px]"
                                 />
                             </div>
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-400 px-1 uppercase tracking-[0.2em]">Email Address</label>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Email Address <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     required
                                     type="email"
-                                    name="from_email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     placeholder="john@example.com"
-                                    className="w-full px-0 py-3 bg-transparent border-b-2 border-slate-200 focus:border-primary transition-all outline-none text-slate-900 font-bold placeholder:text-slate-200"
+                                    disabled={status === "loading"}
+                                    className="w-full px-4 py-3.5 bg-white border-[1.5px] border-slate-200 rounded-[10px] focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-slate-900 font-medium placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-400 min-h-[44px]"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-400 px-1 uppercase tracking-[0.2em]">Phone Number</label>
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">
+                                Phone Number <span className="text-red-500">*</span>
+                            </label>
                             <input
                                 required
                                 type="tel"
                                 name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
                                 placeholder="+61 400 000 000"
-                                className="w-full px-0 py-3 bg-transparent border-b-2 border-slate-200 focus:border-primary transition-all outline-none text-slate-900 font-bold placeholder:text-slate-200"
+                                disabled={status === "loading"}
+                                className="w-full px-4 py-3.5 bg-white border-[1.5px] border-slate-200 rounded-[10px] focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-slate-900 font-medium placeholder:text-slate-400 disabled:bg-slate-50 disabled:text-slate-400 min-h-[44px]"
                             />
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-400 px-1 uppercase tracking-[0.2em]">How can we help?</label>
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">
+                                How can we help? <span className="text-red-500">*</span>
+                            </label>
                             <textarea
                                 required
                                 name="message"
+                                value={formData.message}
+                                onChange={handleChange}
                                 rows={4}
                                 placeholder="Tell us about your needs..."
-                                className="w-full px-0 py-3 bg-transparent border-b-2 border-slate-200 focus:border-primary transition-all outline-none text-slate-900 font-bold placeholder:text-slate-200 resize-none"
+                                disabled={status === "loading"}
+                                className="w-full px-4 py-3.5 bg-white border-[1.5px] border-slate-200 rounded-[10px] focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-slate-900 font-medium placeholder:text-slate-400 resize-none disabled:bg-slate-50 disabled:text-slate-400"
                             ></textarea>
                         </div>
 
@@ -121,11 +166,11 @@ const ContactForm = () => {
                             </motion.div>
                         )}
 
-                        <div className="pt-4">
+                        <div className="pt-2">
                             <button
                                 disabled={status === "loading"}
                                 type="submit"
-                                className="group inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-full font-bold text-sm hover:bg-primary transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:scale-100 shadow-xl shadow-slate-900/10"
+                                className="w-full inline-flex items-center justify-center gap-3 bg-primary text-white px-10 py-4 rounded-xl font-bold text-sm hover:bg-primary-700 hover:-translate-y-0.5 transition-all active:scale-[0.98] disabled:opacity-70 disabled:translate-y-0 disabled:scale-100 shadow-lg shadow-primary/20"
                             >
                                 {status === "loading" ? (
                                     <>
